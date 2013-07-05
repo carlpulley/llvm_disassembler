@@ -4,11 +4,11 @@ Version:     0.0.1
 Authors:     Carl Pulley <c.j.pulley@hud.ac.uk>
 Copyrights:  (C) 2013 Carl Pulley <c.j.pulley@hud.ac.uk>
 Homepage:    https://github.com/carlpulley/llvm_disassembler
-License:     GPL2
+License:     GPL-2+
 Plugins:     META (0.0.1)
 BuildTools:  ocamlbuild
 
-Synopsis:    OCaml bindings to LLVM Disassembler.
+Synopsis:    OCaml bindings to the LLVM Disassembler.
 
 Library "llvm_disassembler"
   Path: .

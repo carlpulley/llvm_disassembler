@@ -16,27 +16,23 @@
 (* Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA *)
 
 open Unsigned
+open BatLazyList
 
-module Disassembly =
-struct
-	open BatLazyList
+type t
 
-	type t
+external create: string -> t = "llvm_create_disasm"
+external disasm_instruction: t -> string -> UInt64.t -> int * string = "llvm_disasm_instruction"
 
-	external create: string -> t = "llvm_create_disasm"
-	external disasm_instruction: t -> string -> UInt64.t -> int * string = "llvm_disasm_instruction"
+let get_instruction disassembler source pc =
+	disasm_instruction disassembler source pc
 
-	let get_instruction disassembler source pc =
-		disasm_instruction disassembler source pc
-
-	let rec get_instructions disassembler source pc =
-		if source = "" then
-			nil
-		else
-			let size, instr = disasm_instruction disassembler source pc in
-			let next_pc = UInt64.add pc (UInt64.of_int size) in
-				if size = 0 then
-					nil
-				else
-					(pc, size, instr) ^:^ (get_instructions disassembler (String.sub source 0 size) next_pc)
-end
+let rec get_instructions disassembler source pc =
+	if source = "" then
+		nil
+	else
+		let size, instr = disasm_instruction disassembler source pc in
+		let next_pc = UInt64.add pc (UInt64.of_int size) in
+			if size = 0 then
+				nil
+			else
+				(pc, size, instr) ^:^ (get_instructions disassembler (String.sub source 0 size) next_pc)

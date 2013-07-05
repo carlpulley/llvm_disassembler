@@ -17,46 +17,44 @@
 
 open Unsigned
 
-module Disassembly: sig
-	type t
+type t
 
-	(* [Disassembly.create triple] create a new disassembler using the gicen [triple]. 
-		 See the constructor llvm::LLVMCreateDisasm. *)
-	external create: string -> t = "llvm_create_disasm"
+(* [Disassembly.create triple] create a new disassembler using the gicen [triple]. 
+	 See the constructor llvm::LLVMCreateDisasm. *)
+external create: string -> t = "llvm_create_disasm"
 
-	(* [Disassembly.disasm_instruction source pc] disassemble an instruction from [source] starting at offset [pc].
-		 See llvm::Disassembly::LLVMDisasmInstruction. *)
-	external disasm_instruction: t -> string -> UInt64.t -> int * string = "llvm_disasm_instruction"
+(* [Disassembly.disasm_instruction source pc] disassemble an instruction from [source] starting at offset [pc].
+	 See llvm::Disassembly::LLVMDisasmInstruction. *)
+external disasm_instruction: t -> string -> UInt64.t -> int * string = "llvm_disasm_instruction"
 
-	(* Obtain the next instruction from an input source.
+(* Obtain the next instruction from an input source.
 
-     The input source should be a str or bytearray or something that
-     represents a sequence of bytes.
+   The input source should be a str or bytearray or something that
+   represents a sequence of bytes.
 
-     This function will start reading bytes from the beginning of the
-     source.
+   This function will start reading bytes from the beginning of the
+   source.
 
-     The pc argument specifies the address that the first byte is at.
+   The pc argument specifies the address that the first byte is at.
 
-     This returns a 2-tuple of:
+   This returns a 2-tuple of:
 
-       int    number of bytes read. 0 if no instruction was read.
-       string representation of instruction. This will be the assembly that
-         represents the instruction.
-  *)
-	val get_instruction: t -> string -> UInt64.t -> int * string
+     int    number of bytes read. 0 if no instruction was read.
+     string representation of instruction. This will be the assembly that
+       represents the instruction.
+*)
+val get_instruction: t -> string -> UInt64.t -> int * string
 
-	(* Obtain multiple instructions from an input source.
+(* Obtain multiple instructions from an input source.
 
-     This is like get_instruction() except it is a lazy list of all the
-     instructions within the source. It starts at the beginning of the
-     source and reads instructions until no more can be read.
+   This is like get_instruction() except it is a lazy list of all the
+   instructions within the source. It starts at the beginning of the
+   source and reads instructions until no more can be read.
 
-     Each member of the lazy list is a 3-tuple of:
+   Each member of the lazy list is a 3-tuple of:
 
-       UInt64 address of instruction.
-       int    size of instruction, in bytes.
-       string representation of instruction.
-	*)
-	val get_instructions: t -> string -> UInt64.t -> (UInt64.t * int * string) BatLazyList.t
-end
+     UInt64 address of instruction.
+     int    size of instruction, in bytes.
+     string representation of instruction.
+*)
+val get_instructions: t -> string -> UInt64.t -> (UInt64.t * int * string) BatLazyList.t
