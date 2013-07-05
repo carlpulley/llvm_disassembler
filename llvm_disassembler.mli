@@ -19,11 +19,11 @@ open Unsigned
 
 type t
 
-(* [Disassembly.create triple] create a new disassembler using the gicen [triple]. 
+(* [Llvm_disassembly.create triple] create a new disassembler using the gicen [triple]. 
 	 See the constructor llvm::LLVMCreateDisasm. *)
 external create: string -> t = "llvm_create_disasm"
 
-(* [Disassembly.disasm_instruction source pc] disassemble an instruction from [source] starting at offset [pc].
+(* [Llvm_disassembly.disasm_instruction source pc] disassemble an instruction from [source] starting at offset [pc].
 	 See llvm::Disassembly::LLVMDisasmInstruction. *)
 external disasm_instruction: t -> string -> UInt64.t -> int * string = "llvm_disasm_instruction"
 
