@@ -1,0 +1,18 @@
+OASISFormat: 0.1
+Name:        llvm_disassembler
+Version:     0.0.1
+Authors:     Carl Pulley <c.j.pulley@hud.ac.uk>
+Copyrights:  (C) 2013 Carl Pulley <c.j.pulley@hud.ac.uk>
+Homepage:    https://github.com/carlpulley/llvm_disassembler
+License:     GPL2
+Plugins:     META (0.0.1)
+BuildTools:  ocamlbuild
+
+Synopsis:    OCaml bindings to LLVM Disassembler.
+
+Library "llvm_disassembler"
+  Path: .
+  Modules: Llvm_disassembler
+  CSources: disassembler_ocaml.c, ctypes_unsigned_stubs.h
+  BuildDepends: dynlink, llvm, ctypes, batteries
+  CCOpt: -D __STDC_LIMIT_MACROS=1 -D __STDC_CONSTANT_MACROS=1
