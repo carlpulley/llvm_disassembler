@@ -1,5 +1,5 @@
-distorm
-=======
+llvm_disassembler
+=================
 
 OCaml bindings to the LLVM Disassembler (http://llvm.org/).
 
