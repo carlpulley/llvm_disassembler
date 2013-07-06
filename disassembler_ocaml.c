@@ -16,6 +16,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 #include <stdlib.h>
+#include <stdio.h>
 
 #include <caml/mlvalues.h>
 #include <caml/memory.h>
@@ -24,26 +25,29 @@
 #include <caml/fail.h>
 #include <caml/custom.h>
 
+#include "llvm-c/Target.h"
 #include "llvm-c/Disassembler.h"
 
 // Copied from https://github.com/ocamllabs/ocaml-ctypes/commit/6ede17ae0749d4660bbb27719ad2c523e616ae24#src/unsigned_stubs.h
 #include "ctypes_unsigned_stubs.h"
 
 // string -> LLVMDisasmContextRef
-CAMLprim LLVMDisasmContextRef llvm_create_disasm(value v_triple) {
-	char* triple;
+CAMLprim LLVMDisasmContextRef llvm_create_disasm(value triple) {
+	return LLVMCreateDisasm(String_val(triple), NULL, 0, NULL, NULL);
+}
 
-	triple = String_val(v_triple);
+// LLVMDisasmContextRef -> unit
+CAMLprim value llvm_dispose_disasm(LLVMDisasmContextRef dc) {
+	LLVMDisasmDispose(dc);
 
-	return LLVMCreateDisasm(triple, NULL, 0, NULL, NULL);
+	return Val_unit;
 }
 
 // LLVMDisasmContextRef -> string -> UInt64.t -> int * string
 CAMLprim value llvm_disasm_instruction(LLVMDisasmContextRef dc, value v_source, value v_pc) {
 	uint8_t* bytes;
 	int bytes_len;
-	char* out_str;
-	int out_str_len, i;
+	char out_str[255];
 	size_t size;
 	uint64_t pc;
 
@@ -54,15 +58,12 @@ CAMLprim value llvm_disasm_instruction(LLVMDisasmContextRef dc, value v_source, 
 	bytes_len = caml_string_length(v_source);
 	pc = Uint64_val(v_pc);
 
-	size = LLVMDisasmInstruction(dc, bytes, bytes_len, pc, out_str, out_str_len);
+	size = LLVMDisasmInstruction(dc, bytes, bytes_len, pc, out_str, 255);
 
 	v_result = alloc_tuple(2);
 	Field(v_result, 0) = Val_int(size);
-	v_out_str = alloc_string(out_str_len);
+	v_out_str = copy_string(out_str);
 	Field(v_result, 1) = v_out_str;
-	for (i=0; i < out_str_len; i++) {
-		Byte_u(v_out_str, i) = out_str[i];
-	}
 
 	CAMLreturn(v_result);
 }

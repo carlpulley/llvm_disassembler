@@ -10,9 +10,19 @@ BuildTools:  ocamlbuild
 
 Synopsis:    OCaml bindings to the LLVM Disassembler.
 
-Library "llvm_disassembler"
+Library llvm_disassembler
   Path: .
   Modules: Llvm_disassembler
   CSources: disassembler_ocaml.c, ctypes_unsigned_stubs.h
-  BuildDepends: dynlink, llvm, ctypes, batteries
+  BuildDepends: llvm, ctypes, batteries
   CCOpt: -D __STDC_LIMIT_MACROS=1 -D __STDC_CONSTANT_MACROS=1
+
+Executable test
+  Path: .
+  MainIs: test.ml
+  BuildDepends: llvm_disassembler, oUnit, batteries
+  CCLib: -L/home/bagpuss/.opam/4.01.0dev+trunk/lib -lLLVM-3.2svn
+  Install: false
+
+Test disasm_tests
+  Command: $test

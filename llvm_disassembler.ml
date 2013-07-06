@@ -21,6 +21,7 @@ open BatLazyList
 type t
 
 external create: string -> t = "llvm_create_disasm"
+external dispose: t -> unit = "llvm_dispose_disasm"
 external disasm_instruction: t -> string -> UInt64.t -> int * string = "llvm_disasm_instruction"
 
 let get_instruction disassembler source pc =
@@ -35,4 +36,4 @@ let rec get_instructions disassembler source pc =
 			if size = 0 then
 				nil
 			else
-				(pc, size, instr) ^:^ (get_instructions disassembler (String.sub source 0 size) next_pc)
+				(pc, size, instr) ^:^ (get_instructions disassembler (Str.string_after source size) next_pc)

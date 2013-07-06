@@ -19,9 +19,13 @@ open Unsigned
 
 type t
 
-(* [Llvm_disassembly.create triple] create a new disassembler using the gicen [triple]. 
-	 See the constructor llvm::LLVMCreateDisasm. *)
+(* [Llvm_disassembly.create triple] create a new disassembler using the given [triple]. 
+   See the constructor llvm::LLVMCreateDisasm. *)
 external create: string -> t = "llvm_create_disasm"
+
+(* [Llvm_disassembly.dispose dc] destroy a disassembler - frees non-heap alloc'ed memory. 
+   See the destructor llvm::LLVMDisposeDisasm. *)
+external dispose: t -> unit = "llvm_dispose_disasm"
 
 (* [Llvm_disassembly.disasm_instruction source pc] disassemble an instruction from [source] starting at offset [pc].
 	 See llvm::Disassembly::LLVMDisasmInstruction. *)
