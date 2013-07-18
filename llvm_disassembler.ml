@@ -25,7 +25,11 @@ external dispose: t -> unit = "llvm_dispose_disasm"
 external disasm_instruction: t -> string -> UInt64.t -> int * string = "llvm_disasm_instruction"
 
 let get_instruction disassembler source pc =
-	disasm_instruction disassembler source pc
+	let size, instr = disasm_instruction disassembler source pc in
+		if size > 0 || String.length source = 0 then
+			(size, instr)
+		else
+			(1, Printf.sprintf "\t.byte\t0x%02x" (Char.code(String.get source 0)))
 
 let rec get_instructions disassembler source pc =
 	if source = "" then

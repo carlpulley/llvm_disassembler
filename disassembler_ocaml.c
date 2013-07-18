@@ -58,11 +58,24 @@ CAMLprim value llvm_disasm_instruction(LLVMDisasmContextRef dc, value v_source, 
 	bytes_len = caml_string_length(v_source);
 	pc = Uint64_val(v_pc);
 
-	size = LLVMDisasmInstruction(dc, bytes, bytes_len, pc, out_str, 255);
+	if (bytes_len == 0) {
+		v_result = alloc_tuple(2);
+		Field(v_result, 0) = Val_int(0);
+		v_out_str = copy_string("");
+		Field(v_result, 1) = v_out_str;
 
+		CAMLreturn(v_result);
+	}
+
+	size = LLVMDisasmInstruction(dc, bytes, bytes_len, pc, out_str, 255);
+	
 	v_result = alloc_tuple(2);
 	Field(v_result, 0) = Val_int(size);
-	v_out_str = copy_string(out_str);
+	if (size > 0) {
+		v_out_str = copy_string(out_str);
+	} else {
+		v_out_str = copy_string("");
+	}
 	Field(v_result, 1) = v_out_str;
 
 	CAMLreturn(v_result);
